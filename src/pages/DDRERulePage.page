@@ -1,0 +1,121 @@
+<apex:page controller="DDRERuleController" tabStyle="DDRE_Rule__c">
+<apex:pageMessages escape="false"/>
+<apex:form id="mainform">
+    
+    <apex:pageBlock id="mainBlock">
+        <apex:pageBlockButtons id="mainButtonsBlock">
+            <apex:commandButton value="Save" action="{!save}"/>
+            <apex:commandButton onclick="history.go(-1);return false;" value="Cancel" />
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection title="Rule Details" id="valueDetailsSection" >
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Rule Name"/>
+                <apex:outputPanel >
+                    <div class="requiredInput">
+                        <div class="requiredBlock"></div>
+                        <apex:inputField value="{!rulePackage.rule.Name}" style="width:230px"/>
+                    </div>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Active"/>
+                <apex:inputField value="{!rulePackage.rule.Active__c}"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Object"/ > 
+                <apex:outputPanel >
+                    <div class="requiredInput">
+                        <div class="requiredBlock"></div>
+                        <apex:selectList value="{!rulePackage.rule.Primary_Object__c}" size="1" disabled="{!IF(OR((rulePackage.rule.Id == null), (cloneRecord)), false, true)}" >
+                            <apex:actionSupport event="onchange" reRender="criteriaPanel"/>
+                            <apex:selectOptions value="{!sObjectTypes}" />
+                        </apex:selectList>
+                    </div>
+                </apex:outputPanel> 
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Start Date"/>
+                <apex:outputPanel >
+                    <div class="requiredInput">
+                        <div class="requiredBlock"></div>
+                        <apex:inputField value="{!rulePackage.rule.Start_Date__c}"/>
+                    </div>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+            </apex:pageBlockSectionItem>
+            
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="End Date"/>
+                <apex:inputField value="{!rulePackage.rule.End_Date__c}"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Criteria Details" columns="1" id="criteriaPanel">
+            <apex:outputText value="Use <Today> for current date. Add or reduce days by using formula '<Today> + n' or '<Today> - n' where n is Number of days." escape="true"/>
+            <apex:actionFunction name="checkForNull" rerender="criteriaPanel"/>
+            <apex:pageBlockTable value="{!rulePackage.criteriaMap}" var="cri" id="criteriaTable">
+                <apex:column headerValue="Action" style="width:5%;text-align:center">
+                    <apex:commandLink value="Del" style="color:red" action="{!removeCriteriaRow}" reRender="criteriaPanel" immediate="true">
+                        <apex:param value="{!cri}" name="cRowNum" assignTo="{!cRowNum}"/>
+                    </apex:commandLink> 
+                </apex:column>
+                <apex:column headerValue="(PV : Prior Value) Field Name " style="width:15%">
+                    <apex:inputField value="{!rulePackage.criteriaMap[cri].Prior_Value__c}" >PV</apex:inputField>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <apex:selectList value="{!rulePackage.criteriaMap[cri].Field_Name__c}" size="1" >  
+                        <apex:actionSupport event="onchange" action="{!setFieldType}" reRender="criteriaPanel" >
+                            <apex:param value="{!cri}" name="cRowNum" assignTo="{!cRowNum}"/>
+                        </apex:actionSupport>
+                        <apex:selectOptions value="{!fieldTypes}" />
+                    </apex:selectList>
+                </apex:column>              
+                <apex:column headerValue="Operator" style="width:15%;text-align:left">
+                    <apex:inputField value="{!rulePackage.criteriaMap[cri].Field_Type__c}" style="display:none"/>
+                    <apex:inputField value="{!rulePackage.criteriaMap[cri].Operator__c}" style="width:80%" onchange="checkForNull()"/>
+                </apex:column>
+                <apex:column headerValue="Field Value" style="width:15%;text-align:left">
+                    <apex:outputPanel rendered="{!AND(rulePackage.criteriaMap[cri].Operator__c <> 'Is Null', rulePackage.criteriaMap[cri].Operator__c <> 'Is Not Null')}">
+                    <div class="requiredInput">
+                        <div class="requiredBlock"></div>
+                        
+                        <apex:inputField value="{!rulePackage.criteriaMap[cri].Value__c}" style="width:70%;" rendered="{!rulePackage.criteriaMap[cri].Field_Type__c <> 'Double'}"/>
+                        <apex:inputField value="{!rulePackage.criteriaMap[cri].Double__c}" style="width:70%;" rendered="{!rulePackage.criteriaMap[cri].Field_Type__c == 'Double'}"/>
+                        <apex:inputField value="{!rulePackage.criteriaMap[cri].DTValue__c}" rendered="{!rulePackage.criteriaMap[cri].Field_Type__c == 'Date'}"/>
+                        
+                        &nbsp;&nbsp;({!rulePackage.criteriaMap[cri].Field_Type__c})
+                    </div>
+                    </apex:outputPanel>
+                </apex:column>
+                <apex:column headerValue="Active" style="width:5%">
+                    <apex:inputField value="{!rulePackage.criteriaMap[cri].Active__c}" />
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:commandButton value="Add" action="{!rulePackage.addCriteriaRow}" reRender="criteriaPanel"/>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Rule Value Details" columns="1" id="ruleValuePanel">
+            <apex:pageBlockTable style="width:30%;" value="{!rulePackage.ruleValueMap}" var="rv" id="ruleValueTable">
+                <apex:column headerValue="Action" style="width:15%;text-align:center">
+                    <apex:commandLink value="Del" style="color:red" action="{!removeRVRow}" reRender="ruleValuePanel" immediate="true">
+                        <apex:param value="{!rv}" name="rvRowNum" assignTo="{!rvRowNum}"/>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="Value Name" style="width:70%;text-align:left">
+                    <apex:inputField value="{!rulePackage.ruleValueMap[rv].DDRE_Value__c}" />
+                </apex:column>
+                <apex:column headerValue="Active" style="width:15%;text-align:center">
+                    <apex:inputField value="{!rulePackage.ruleValueMap[rv].Active__c}" />
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:commandButton value="Add" action="{!rulePackage.addrVRow}" reRender="ruleValuePanel"/>
+        </apex:pageBlockSection>
+        
+    </apex:pageBlock>
+    
+</apex:form>
+</apex:page>

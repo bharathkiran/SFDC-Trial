@@ -1,0 +1,37 @@
+<apex:component controller="JMBDashboard">
+<c:BSUtility />
+<div class="bs-example">
+<table width="100%" >
+    <tr>
+        <td id="headderTable" height="64px" BGCOLOR="#31a09d" style="color: #FFFFFF;font-family: 'Montserrat', sans-serif;font-weight: bold;font-size: 3.2em;margin-left: 25px;text-decoration: none;padding-left: 25px;">
+            Michigan Treasury Online
+        </td>
+    </tr>
+    <tr>
+        <td height="40px" BGCOLOR="#31a09d">
+        <nav class="navbar navbar-default" BGCOLOR="#31a09d">
+	        <div class="container-fluid">
+	            <ul class="nav navbar-nav">
+	                <li class="active"><a href="https://na30.salesforce.com/home/home.jsp">Home</a></li>
+	                <li><a href="#">Profile</a></li>
+	                <li><a href="#">Messages</a></li>
+	                <apex:repeat value="{!tabs}" var="tab">
+	                    <li>
+	                       <!-- <a href="{!tab.linkurl}">{!tab.linkname}</a>-->
+                            <a href="/apex/ObjectListView?sObjectName={!tab.sObjectName}">{!tab.linkname}</a>
+	                    </li>    
+	                </apex:repeat>
+	            </ul>
+	            
+	        </div>
+	    </nav>
+        </td>
+       
+    </tr>
+    <tr>
+        <td height="6px" BGCOLOR="#d2d2d2">
+        </td>
+    </tr>
+</table>
+</div>
+</apex:component>

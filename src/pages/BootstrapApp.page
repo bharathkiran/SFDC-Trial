@@ -1,0 +1,40 @@
+<apex:page controller="JMBDashboard"  showHeader="false" standardStylesheets="false" sidebar="false" >
+<apex:pageMessages />
+<link href="/sCSS/36.0/sprites/1454515698000/Theme3/default/gc/zen-componentsCompatible.css" rel="stylesheet" type="text/css"/><link href="/sCSS/36.0/sprites/1454515698000/Theme3/default/gc/elements.css" rel="stylesheet" type="text/css"/><link href="/sCSS/36.0/sprites/1454515698000/Theme3/default/gc/common.css" rel="stylesheet" type="text/css"/><link href="/sCSS/36.0/sprites/1454515698000/Theme3/default/gc/rlHovers.css" rel="stylesheet" type="text/css"/><link href="/sCSS/36.0/sprites/1454515698000/Theme3/default/gc/chatterCore.css" rel="stylesheet" type="text/css"/><link href="/sCSS/36.0/sprites/1454515698000/Theme3/default/gc/chatterExtended.css" rel="stylesheet" type="text/css"/><link href="/sCSS/36.0/sprites/1454515698000/Theme3/default/gc/DedupeCSS.css" rel="stylesheet" type="text/css"/><link href="/sCSS/36.0/sprites/1458071680000/Theme3/gc/dStandard.css" rel="stylesheet" type="text/css"/><link href="/sCSS/36.0/sprites/1458326636000/Theme3/00Dr00000000a0M/005r0000000Gr8f/gc/dCustom0.css" rel="stylesheet" type="text/css"/><link href="/sCSS/36.0/sprites/1458326636000/Theme3/00Dr00000000a0M/005r0000000Gr8f/gc/dCustom1.css" rel="stylesheet" type="text/css"/><link href="/sCSS/36.0/sprites/1454515698000/Theme3/default/gc/extended.css" rel="stylesheet" type="text/css"/>
+<script src="/EXT/ext-3.0.0/ext-core.js"></script><script src="/jslibrary/1454442180000/sfdc/main.js"></script><script src="/jslibrary/jslabels/1458079728000/en_US.js"></script><script src="/jslibrary/1450392800000/sfdc/Chatter.js"></script><script src="/jslibrary/1450392800000/sfdc/DedupeJS.js"></script><script src="/jslibrary/1450392800000/sfdc/DevContextMenu.js"></script>
+<html lang="en">
+<c:BSUtility />
+<body>
+
+<div class="bs-example">
+    <table width="100%">
+        <tr>
+            <td width="20%"></td>
+            <td width="30%"></td>
+            <td width="50%">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="https://na30.salesforce.com/secur/logout.jsp">Logout</a></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+    <nav class="navbar navbar-default">
+    
+        <div class="container-fluid">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="https://na30.salesforce.com/home/home.jsp">Home</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Messages</a></li>
+                <apex:repeat value="{!tabs}" var="tab">
+                    <li>
+                        <a href="{!tab.linkurl}">{!tab.linkname}</a>
+                    </li>    
+                </apex:repeat>
+            </ul>
+            
+        </div>
+    </nav>
+</div>
+</body>
+</html>                                  
+</apex:page>

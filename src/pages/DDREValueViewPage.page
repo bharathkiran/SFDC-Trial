@@ -1,0 +1,99 @@
+<apex:page controller="DDREValueController" tabStyle="DDRE_Value__c" >
+<apex:pageMessages escape="false"/>
+
+<apex:form >
+
+<apex:pageBlock >
+    <apex:pageBlockButtons >
+        <apex:commandButton value="Edit" action="{!edit}"/>
+        <apex:commandButton value="Clone" action="{!clonevaluePackage}"/>
+    </apex:pageBlockButtons>
+    
+    <apex:pageBlockSection >
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Value Name"/>
+            <apex:outputField value="{!valuepackage.value.Name}" style="width:230px"/>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Active"/>
+            <apex:outputField value="{!valuepackage.value.Active__c}"/>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Value Object"/>
+            <apex:outputField value="{!valuepackage.value.Object__c}" style="width:230px"/>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Start Date"/>
+            <apex:outputField value="{!valuepackage.value.Start_Date__c}"/>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Master Object"/>
+            <apex:outputField value="{!valuepackage.value.Master_Object__c}" style="width:230px"/>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="End Date"/>
+            <apex:outputField value="{!valuepackage.value.End_Date__c}"/>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Description"/>
+            <apex:outputField value="{!valuepackage.value.Description__c}"/>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem >
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Created By"/>
+            <apex:outputPanel >
+                <apex:outputLink value="/!{valuepackage.value.CreatedById}">{!valuepackage.value.CreatedBy.Name}</apex:outputLink>, <apex:outputField value="{!valuepackage.value.CreatedDate}"/> 
+            </apex:outputPanel>
+            
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Last Modified By"/>
+            <apex:outputPanel >
+                <apex:outputLink value="/!{valuepackage.value.LastModifiedById}">{!valuepackage.value.LastModifiedBy.Name}</apex:outputLink>, <apex:outputField value="{!valuepackage.value.LastModifiedDate}"/>                
+            </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+    </apex:pageBlockSection>
+    
+    <apex:pageBlockSection title="Value Components" columns="1" id="valuePanel">
+        <apex:pageBlockTable style="width:100%" value="{!valuepackage.valueComponentsMap}" var="vc" id="valueTable">
+            <apex:column headerValue="Action" style="width:30px">
+                <apex:commandLink value="Del" style="color:red" action="{!removeVCRow}" rerender="valuePanel" immediate="true" >
+                    <apex:param value="{!vc}" name="vcRowNum" assignTo="{!vcRowNum}"/>
+                </apex:commandLink>
+            </apex:column>
+            <apex:column headerValue="Field Name" style="width:100px">                
+                {!valuepackage.valueComponentsMap[vc].Field_API_Name__c}
+                <apex:outputLabel value=" : {!valuepackage.valueComponentsMap[vc].Variable_Name__c}" rendered="{!valuepackage.valueComponentsMap[vc].Variable_Name__c <> ''}"/>
+                 
+            </apex:column>
+            <apex:column style="width:100px" headerValue="Field Value" > {!valuepackage.valueComponentsMap[vc].Field_Value__c} </apex:column>
+            <apex:column style="width:100px" headerValue="Active" > 
+                <apex:outputField value="{!valuepackage.valueComponentsMap[vc].Active__c}" />
+            </apex:column>
+        </apex:pageBlockTable>
+    </apex:pageBlockSection>
+    
+    <apex:pageBlockSection title="Rule Values" columns="1" id="ruleValuePanel">
+            <apex:pageBlockTable style="width:30%;" value="{!valuepackage.ruleValueMap}" var="rv" id="ruleValueTable">
+                <apex:column headerValue="Value Name" style="width:60%">
+                    <apex:outputLink value="/apex/DDRERuleViewPage?ruleid={!valuepackage.ruleValueMap[rv].DDRE_Rule__c}" >{!valuepackage.ruleValueMap[rv].DDRE_Rule__r.Name}</apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="Active" style="width:10%;text-align:center">
+                    <apex:outputField value="{!valuepackage.ruleValueMap[rv].Active__c}" />
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+</apex:pageBlock>
+
+</apex:form>
+</apex:page>

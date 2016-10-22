@@ -1,0 +1,46 @@
+<apex:page controller="OrderFormController"  tabStyle="Order__c">
+  <apex:pageMessages />
+  <script>
+  function computeTotal(quantityId, unitPriceId, discountId, totalId){
+    var quantity = document.getElementById(quantityId).value;
+    var cost = document.getElementById(unitPriceId).innerHTML; 
+    var discount = document.getElementById(discountId).innerHTML; 
+    var totalPrice = quantity * (((100 - discount)/cost) * 100);       
+    document.getElementById(totalId).innerHTML = totalPrice;
+  }
+</script>
+
+  <apex:form >
+      <apex:pageBlock title="Order Number : {!order.Name}" >
+          <apex:pageBlockTable value="{!lineItemMap}" var="item">
+              <apex:column headerValue="Product">
+                  <apex:selectList value="{!lineItemMap[item].lineItem.Product__c}" size="1">
+                      <apex:selectOptions value="{!Products}"/>
+                  </apex:selectList>
+              </apex:column>
+              <apex:column headerValue="Price">
+                  <apex:outputField value="{!lineItemMap[item].lineItem.Product__r.Price__c}" id="unitPrice"/>
+              </apex:column>
+              <apex:column headerValue="Quantity">
+                  <apex:outputField value="{!lineItemMap[item].lineItem.Quantity__C}" rendered="{!NOT(lineItemMap[item].isSaveVisible)}"/>
+                  <apex:inputField value="{!lineItemMap[item].lineItem.Quantity__C}" rendered="{!lineItemMap[item].isSaveVisible}" id="quantity" onblur="computeTotal('{!$Component.quantity}','{!$Component.unitPrice}','{!$Component.discount}','{!$Component.total}');"/>
+              </apex:column>
+              <apex:column headerValue="Discount">
+                  <apex:outputField value="{!lineItemMap[item].lineItem.Discount__c}" rendered="{!NOT(lineItemMap[item].isSaveVisible)}"/>
+                  <apex:inputField value="{!lineItemMap[item].lineItem.Discount__c}" rendered="{!lineItemMap[item].isSaveVisible}" id="discount" onblur="computeTotal('{!$Component.quantity}','{!$Component.unitPrice}','{!$Component.discount}','{!$Component.total}');"/>
+              </apex:column>
+              <apex:column headerValue="Total">
+                  <apex:outputText id="total"/>
+              </apex:column>
+              <apex:column headerValue=" ">
+                  <apex:commandButton value="Save" rendered="{!lineItemMap[item].isSaveVisible}"/>
+                  <apex:commandButton value="Edit" rendered="{!NOT(lineItemMap[item].isSaveVisible)}"/>
+                  <apex:commandButton value="Del"/>
+              </apex:column>
+          </apex:pageBlockTable>                
+      </apex:pageBlock>
+  
+  </apex:form>
+  
+  
+</apex:page>

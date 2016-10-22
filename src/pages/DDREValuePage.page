@@ -1,0 +1,168 @@
+<apex:page controller="DDREValueController" tabStyle="DDRE_Value__c">
+<apex:pageMessages escape="false"/>
+
+<style type="text/css">
+     #valueHelp { vertical-align: top; height:auto !important; }
+     #helplist {display:none; }
+     .show {display: none; }
+     .hide:target + .show {display: inline; }
+     .hide:target {display: none; }
+     .hide:target ~ #helplist {display:inline; }
+     .fVTextButton {padding:0;font-size:11px;}
+     .operatorButton{padding:0px 10px;font-size:11px;}
+     @media print { .hide, .show { display: none; } }
+    
+    
+</style>
+<script type="text/javascript">
+function insert(el,ins) {
+window.lstText={};
+    
+    if (el.setSelectionRange){
+        el.value = el.value.substring(0,el.selectionStart) + ins + el.value.substring(el.selectionEnd,el.value.length);
+    }
+    else if (document.selection && document.selection.createRange) {
+        el.focus();
+        var range = document.selection.createRange();
+        range.text = ins;
+    }
+}
+</script>
+<apex:form id="mainform">
+    
+    <apex:pageBlock id="mainBlock">
+        <apex:pageBlockButtons id="mainButtonsBlock">
+            <apex:commandButton value="Save" action="{!save}"/>
+            <apex:commandButton value="Cancel" action="{!cancel}"/>
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection title="Value Details" id="valueDetailsSection">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Value Name"/>
+                <apex:outputPanel >
+                    <div class="requiredInput">
+                        <div class="requiredBlock"></div>
+                        <apex:inputField value="{!valuepackage.value.Name}" style="width:230px"/>
+                    </div>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Active"/>
+                <apex:inputField value="{!valuepackage.value.Active__c}"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Value Object"/ > 
+                <apex:outputPanel >
+                    <div class="requiredInput">
+                        <div class="requiredBlock"></div>
+                        <apex:selectList value="{!valuepackage.value.Object__c}" size="1" disabled="{!IF(OR((valuepackage.value.Id == null), (cloneRecord)), false, true)}" >
+                            <apex:actionSupport event="onchange" reRender="valuePanel,mainform"/>
+                            <apex:selectOptions value="{!sObjectTypes}" />
+                        </apex:selectList>
+                    </div>
+                </apex:outputPanel> 
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Start Date"/>
+                <apex:outputPanel >
+                    <div class="requiredInput">
+                        <div class="requiredBlock"></div>
+                        <apex:inputField value="{!valuepackage.value.Start_Date__c}"/>
+                    </div>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Master Object"/ > 
+                <apex:outputPanel >
+                    <div class="requiredInput">
+                        <div class="requiredBlock"></div>
+                        <apex:selectList value="{!valuepackage.value.Master_Object__c}" size="1" disabled="{!IF(OR((valuepackage.value.Id == null), (cloneRecord)), false, true)}" >
+                            <apex:actionSupport event="onchange" reRender="valuePanel"/>
+                            <apex:selectOptions value="{!sObjectTypes}" />
+                        </apex:selectList>
+                    </div>
+                </apex:outputPanel> 
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="End Date"/>
+                <apex:inputField value="{!valuepackage.value.End_Date__c}"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        
+        
+        <apex:pageBlockSection title="Value Component Details : Set Value Object Fields" columns="1" id="valuePanel" >  
+            
+            <div id="valueHelp">
+            <a href="#hide1" class="hide" id="hide1">Help : Expand</a>
+            <a href="#show1" class="show" id="show1">Help : Collapse</a>
+            <div id="helplist"><code style="font-size:12px;font-weight: bold;">
+            <ul>
+            <li><span style="text-decoration: underline;">Click on the Button to insert template in Field value at cursor position.</span></li>
+            <li><span style="text-decoration: underline;">Make sure to include only one space, before and after the OPERATOR, if not this will lead to errors.</span></li>
+            <li><span style="text-decoration: underline; ">Please make sure that you do not use " + ", " - ", " * ", " / ", " % " in the Field Value.</span></li>
+            <li>Operators available for numbers :  
+                <input class="operatorButton" type="button" value="+" onclick="insert(window.lstText,'insertN1 + insertN2')"></input> 
+                <input class="operatorButton" type="button" value="-" onclick="insert(window.lstText,'insertN1 - insertN2')"></input> 
+                <input class="operatorButton" type="button" value="*" onclick="insert(window.lstText,'insertN1 * insertN2')"></input> 
+                <input class="operatorButton" type="button" value="/" onclick="insert(window.lstText,'insertN1 + insertN2')"></input> 
+                <input class="operatorButton" type="button" value="%" onclick="insert(window.lstText,'insertN1 % insertFieldAPIName')"></input>
+            </li>
+            <li>To concatenate text use: 
+                <input class="operatorButton" type="button" value="<conStr></conStr>" onclick="insert(window.lstText,'<conStr>s1,s2,s3...</conStr>')"></input> 
+            </li>
+            <li>Reference tags: <span style="text-decoration: underline;">These tags can be used only once for every Field Value</span>
+                <input class="fVTextButton" type="button" value="<m></m>" onclick="insert(window.lstText,'<m></m>')"></input>
+                <input class="fVTextButton" type="button" value="<s></s>" onclick="insert(window.lstText,'<s></s>')"></input>
+                <input class="fVTextButton" type="button" value="<v></v>" onclick="insert(window.lstText,'<v></v>')"></input>
+            </li>
+            <li>Use <input class="fVTextButton" type="button" value="<Today>" onclick="insert(window.lstText,'<Today>')"></input> for current date. <input class="fVTextButton" type="button" value="Add Days" onclick="insert(window.lstText,'<Today> + n')"></input> <input class="fVTextButton" type="button" value="Reduse Days" onclick="insert(window.lstText,'<Today> - n')"></input> where n is Number of days.</li>
+            <li>Use the tag <input class="fVTextButton" type="button" value="<calculateFormula/>" onclick="insert(window.lstText,'<calculateFormula/>')"></input> in Field Value to get a calculated value.</li>
+            </ul></code>
+            </div>
+            </div>
+            <apex:outputPanel id="mObjAPIName">
+                <code style="font-size:13px;font-weight: bold;">Available Master Object Field API Name : &nbsp;&nbsp;&nbsp;&nbsp;</code>
+                <apex:selectList value="{!fieldAPIName}" size="1" >
+                    <apex:actionSupport event="onchange" reRender="mObjAPIName" />
+                    <apex:selectOption itemValue="" itemLabel="--NONE--"/>
+                    <apex:selectOptions value="{!FieldTypes}" />
+                </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;
+                <code style="font-size:14px;font-weight: bold;"><span style="color:#0174DF">{!fieldAPIName}</span></code>
+            </apex:outputPanel>
+            <span style="text-decoration: underline;color : red;">Please read HELP before creating Value Components.</span>
+            <apex:pageBlockTable style="width:100%" value="{!valuepackage.valueComponentsMap}" var="vc" id="valueTable">
+                <apex:column headerValue="Action" >
+                    <apex:commandLink value="Del" style="color:red" action="{!removeVCRow}" reRender="valuePanel" immediate="true">
+                        <apex:param value="{!vc}" name="vcRowNum" assignTo="{!vcRowNum}"/>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="Field Name" style="width:30%">
+                    <apex:selectList value="{!valuepackage.valueComponentsMap[vc].Field_API_Name__c}" size="1" >  
+                        <apex:actionSupport event="onchange" reRender="valueTable" >
+                        </apex:actionSupport>
+                        <apex:selectOptions value="{!VCFieldTypes}" />
+                    </apex:selectList><br/>
+                    <apex:outputPanel rendered="{!valuepackage.valueComponentsMap[vc].Field_API_Name__c == 'Variable'}">
+                        <apex:inputField value="{!valuepackage.valueComponentsMap[vc].Variable_Name__c}" html-placeholder="Enter Variable Name"/>
+                        <span style="color:#0174DF"><code>(Must be unique)</code></span>
+                    </apex:outputPanel>
+                </apex:column>
+                <apex:column headerValue="Field Value" style="width:30%;text-align:center">
+                    <apex:inputField value="{!valuepackage.valueComponentsMap[vc].Field_Value__c}" style="width:80%" onfocus="window.lstText=this;"/>
+                </apex:column>
+                <apex:column headerValue="Active" style="width:30%">
+                    <apex:inputField value="{!valuepackage.valueComponentsMap[vc].Active__c}" />
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:commandButton value="Add" action="{!valuepackage.addvcRow}" reRender="valuePanel"/>
+        </apex:pageBlockSection>        
+    </apex:pageBlock>
+    
+</apex:form>
+
+</apex:page>

@@ -1,0 +1,31 @@
+<apex:component >
+    <div class="clear" style="height:10px;"></div>
+    <!-- Footer -->
+    <footer role="contentinfo" class="footer">
+        <div class="container">
+            <ul class="footerNav" id="footer">
+                <li>
+                    <a href="http://www.michigan.gov" title="Michigan's Official Web Site" target="_blank">MI.gov</a>
+                </li>
+                <li>
+                    <a href="{!URLFOR('/')}">Home</a>
+                </li>
+                <li>
+                    <a href="http://www.michigan.gov/lcc" target="_blank">About</a>
+                </li>
+                <li>
+                    <a href="#" class="jq-contactInfo">Contact</a>
+                </li>
+                <li>
+                    <a href="http://www.michigan.gov/policies" target="_blank">Policies</a>
+                </li>
+                <li>
+                    <a href="#" class="visible-xs visible-sm">Back to Top</a>
+                </li>
+            </ul>
+            <p class="hidden-xs">
+                Copyright&copy; <span id="currentYear">{!YEAR(TODAY())}</span> State of Michigan
+            </p>
+        </div>
+    </footer>
+</apex:component>

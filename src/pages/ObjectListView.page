@@ -1,0 +1,31 @@
+<apex:page controller="objectListViewController" showHeader="false" sidebar="false" standardStylesheets="false">
+    <c:BSUtility />
+    <apex:includeScript value="//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"/>
+    <apex:stylesheet value="//cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css"/>
+    <script>
+    $(document).ready(function(){        
+        var oTable= $('[id$="myTable"]').DataTable();  
+    }); 
+    </script>
+    <c:BSHeader ></c:BSHeader>
+    <apex:pageMessages ></apex:pageMessages>
+    <table id="myTable">
+        <thead>
+            <tr>
+                <apex:repeat value="{!Selectedfields}" var="field">                
+                    <th>{!Selectedfields[field].Label}</th>
+                </apex:repeat>
+            </tr>
+        </thead>
+        <tbody>
+            <apex:repeat value="{!sObjectRecords}" var="rec">  
+                <tr>
+                    <apex:repeat value="{!Selectedfields}" var="field">  
+                        <th>{!rec[Selectedfields[field].name]}</th>
+                    </apex:repeat>
+                </tr>
+            </apex:repeat>
+        </tbody>
+    </table>
+<c:BSFooter ></c:BSFooter>
+</apex:page>

@@ -1,0 +1,111 @@
+<apex:page controller="DDRERuleController" tabStyle="DDRE_Rule__c">
+<apex:pageMessages escape="false"/>+
+
+<apex:form id="mainform">
+    
+    <apex:pageBlock id="mainBlock">
+        <apex:pageBlockButtons >
+            <apex:commandButton value="Edit" action="{!edit}"/>
+            <apex:commandButton value="Clone" action="{!cloneRulePackage}"/>
+        </apex:pageBlockButtons>
+    
+        <apex:pageBlockSection >
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Rule Name"/>
+                <apex:outputField value="{!rulePackage.rule.Name}" style="width:230px"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Active"/>
+                <apex:outputField value="{!rulePackage.rule.Active__c}"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Object"/>
+                <apex:outputField value="{!rulePackage.rule.Primary_Object__c}" style="width:230px"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Start Date"/>
+                <apex:outputField value="{!rulePackage.rule.Start_Date__c}"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="End Date"/>
+                <apex:outputField value="{!rulePackage.rule.End_Date__c}"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Description"/>
+                <apex:outputField value="{!rulePackage.rule.Description__c}"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Created By"/>
+                <apex:outputPanel >
+                    <apex:outputLink value="/!{rulePackage.rule.CreatedById}">{!rulePackage.rule.CreatedBy.Name}</apex:outputLink>, <apex:outputField value="{!rulePackage.rule.CreatedDate}"/> 
+                </apex:outputPanel>
+                
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Last Modified By"/>
+                <apex:outputPanel >
+                    <apex:outputLink value="/!{rulePackage.rule.LastModifiedById}">{!rulePackage.rule.LastModifiedBy.Name}</apex:outputLink>, <apex:outputField value="{!rulePackage.rule.LastModifiedDate}"/>              
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Criteria" columns="1" id="criteriaPanel">
+            <apex:pageBlockTable value="{!rulePackage.criteriaMap}" var="cri" id="criteriaTable">
+                <apex:column headerValue="Action" style="width:10%;text-align:center">
+                    <apex:commandLink value="Del" style="color:red" action="{!removeCriteriaRow}" reRender="criteriaPanel" immediate="true">
+                        <apex:param value="{!cri}" name="cRowNum" assignTo="{!cRowNum}"/>
+                    </apex:commandLink> 
+                </apex:column>
+                <apex:column headerValue="Field Name" style="width:15%;text-align:left">
+                    <b><span style="color:#0174DF"><apex:outputLabel value="PRIOR VALUE of :" rendered="{!rulePackage.criteriaMap[cri].Prior_Value__c == true}"/></span></b>
+                    <apex:outputField value="{!rulePackage.criteriaMap[cri].Field_Name__c}" style="width:80%" />
+                </apex:column>
+                
+                <apex:column headerValue="Operator" style="width:15%;text-align:left">
+                    <apex:outputField value="{!rulePackage.criteriaMap[cri].Operator__c}" style="width:80%" />
+                </apex:column>
+                <apex:column headerValue="Field Value" style="width:15%;text-align:left">
+                    <apex:outputPanel rendered="{!AND(rulePackage.criteriaMap[cri].Operator__c <> 'Is Null', rulePackage.criteriaMap[cri].Operator__c <> 'Is Not Null')}">
+                    <apex:outputField value="{!rulePackage.criteriaMap[cri].Value__c}" style="width:70%;" rendered="{!rulePackage.criteriaMap[cri].Field_Type__c <> 'Double'}"/>
+                    <apex:outputField value="{!rulePackage.criteriaMap[cri].Double__c}" style="width:70%;" rendered="{!rulePackage.criteriaMap[cri].Field_Type__c == 'Double'}"/>
+                    <apex:outputField value="{!rulePackage.criteriaMap[cri].DTValue__c}" rendered="{!rulePackage.criteriaMap[cri].Field_Type__c == 'Date'}"/>
+                    </apex:outputPanel>
+                </apex:column>
+                <apex:column headerValue="Active" style="width:5%">
+                    <apex:outputField value="{!rulePackage.criteriaMap[cri].Active__c}" />
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Rule Values" columns="1" id="ruleValuePanel">
+            <apex:pageBlockTable style="width:30%;" value="{!rulePackage.ruleValueMap}" var="rv" id="ruleValueTable">
+                <apex:column headerValue="Action" style="width:30%;text-align:center">
+                    <apex:commandLink value="Del" style="color:red" action="{!removeRVRow}" reRender="ruleValueTable" immediate="true">
+                        <apex:param value="{!rv}" name="rvRowNum" assignTo="{!rvRowNum}"/>
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="Value Name" style="width:60%">
+                    <apex:outputLink value="/apex/DDREValueViewPage?valueid={!rulePackage.ruleValueMap[rv].DDRE_Value__c}" >{!rulePackage.ruleValueMap[rv].DDRE_Value__r.Name}</apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="Active" style="width:10%;text-align:center">
+                    <apex:outputField value="{!rulePackage.ruleValueMap[rv].Active__c}" />
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    
+</apex:form>
+</apex:page>
